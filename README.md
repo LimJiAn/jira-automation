@@ -20,7 +20,7 @@ or
 go get -u
 ```
 
-##### make env file
+##### Make env file
 
 ```bash
 vi .env

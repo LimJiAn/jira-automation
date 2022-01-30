@@ -118,6 +118,7 @@ func ReleaseIssues(jiraClient *jira.Client) {
 	deployDay = time.Now().Format(layout)
 
 	jql = "Write down the Jql that you want to change the release status."
+
 	issues := GetAllIssues(jiraClient, jql)
 	if !*options.confirm {
 		for _, v := range issues {
