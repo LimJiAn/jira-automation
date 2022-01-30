@@ -1,4 +1,4 @@
-# jira-automation`
+# jira-automation
 
 Jira status change automation.
 ## Requirements
@@ -10,8 +10,12 @@ Jira status change automation.
 
 
 ```bash
+git clone https://github.com/LimJiAn/jira-automation
+
 go get github.com/andygrunwald/go-jira
 go get github.com/joho/godotenv
+
+go get
 ```
 
 ##### make env file
