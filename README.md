@@ -28,7 +28,7 @@ vi .env
 JIRA_USERNAME = 'username'
 JIRA_PASSWORD = 'password'
 JIRA_URL = 'jira_url'
-POST_MESSAGE_URI = 'webhook post message url'
+WEBHOOK_URL = 'webhook url'
 
 ```
 

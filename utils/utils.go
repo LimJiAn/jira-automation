@@ -90,5 +90,5 @@ func PostMessage(content string) {
 	data, _ := json.Marshal(map[string]string{
 		"text": content,
 	})
-	DoRequest(MakeRequest("POST", os.Getenv("POST_MESSAGE_URI"), data), header)
+	DoRequest(MakeRequest("POST", os.Getenv("WEBHOOK_URL"), data), header)
 }
