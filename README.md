@@ -14,6 +14,7 @@ git clone https://github.com/LimJiAn/jira-automation
 
 go get github.com/andygrunwald/go-jira
 go get github.com/joho/godotenv
+go get github.com/go-resty/resty/v2
 
 or
 

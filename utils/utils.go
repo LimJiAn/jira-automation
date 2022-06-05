@@ -12,6 +12,8 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
+
+	"github.com/go-resty/resty/v2"
 )
 
 func CheckError(err error) {
@@ -83,12 +85,14 @@ func AskForConfirmation(s string) bool {
 }
 
 func PostMessage(content string) {
-	header := map[string]string{
-		"Content-Type": "application/json",
-	}
-	// if slack payload key text
 	data, _ := json.Marshal(map[string]string{
 		"text": content,
 	})
-	DoRequest(MakeRequest("POST", os.Getenv("WEBHOOK_URL"), data), header)
+
+	client := resty.New()
+	_, err := client.R().
+		SetHeader("Content-Type", "application/json").
+		SetBody(data).
+		Post(os.Getenv("WEBHOOK_URL"))
+	CheckError(err)
 }
