@@ -45,8 +45,6 @@ func WebhookMessage(jql string) {
 		log.Fatal(err)
 	}
 
-	fmt.Printf("resp.StatusCode: %v\n", resp.StatusCode)
-
 	if resp.StatusCode != 200 {
 		log.Fatal(fmt.Sprintf("Error: %s", string(body)))
 	}
