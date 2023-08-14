@@ -1,6 +1,7 @@
 # jira-automation
 
 Jira status change automation.
+
 Code that registers as a system service file and then executes it as a cron to change the status of the deployed issue
 ## Requirements
 
