@@ -1,98 +1,53 @@
 package utils
 
 import (
-	"bufio"
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
+	"log"
 	"net/http"
 	"os"
-	"regexp"
-	"runtime"
-	"strconv"
-	"strings"
-
-	"github.com/go-resty/resty/v2"
 )
 
-func CheckError(err error) {
+const (
+	WebhookContent     = "[배포 완료]\n" + "배포 목록 리스트 입니다."
+	webhookLinkContent = "배포 내용 확인하기"
+)
+
+func WebhookMessage(jql string) {
+	data, err := json.Marshal(map[string]string{
+		"content":      WebhookContent,
+		"link_content": webhookLinkContent,
+		"link":         os.Getenv("JIRA_URL") + "issues/?jql=" + jql,
+	})
 	if err != nil {
-		LogText(2, err.Error())
-		panic(err)
+		log.Fatal(err)
 	}
-}
 
-func LogText(num int, str ...string) string {
-	_, file, line, _ := runtime.Caller(num)
-	text := []interface{}{file, "line-" + strconv.Itoa(line), str}
-	fmt.Println(text)
-	return fmt.Sprintf("%v", text)
-}
-
-func MakeRequest(method, url string, reqData []byte) *http.Request {
-	buff := bytes.NewBuffer(reqData)
-	req, err := http.NewRequest(method, url, buff)
-	CheckError(err)
-	req.Close = true
-	return req
-}
-
-func DoRequest(req *http.Request, header map[string]string) map[string]interface{} {
-	for key, val := range header {
-		req.Header.Add(key, val)
+	req, err := http.NewRequest(http.MethodPost, os.Getenv("WEBHOOK_URL"), bytes.NewBuffer(data))
+	if err != nil {
+		log.Fatal(err)
 	}
+
+	req.Header.Set("Content-Type", "application/json")
+
 	client := &http.Client{}
 	resp, err := client.Do(req)
-	CheckError(err)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	defer resp.Body.Close()
-	respBytes, err := ioutil.ReadAll(resp.Body)
-	CheckError(err)
-	var respData map[string]interface{}
-	err = json.Unmarshal(respBytes, &respData)
-	CheckError(err)
-	return respData
-}
 
-func AskForDeploy(s string) (bool, string) {
-	reader := bufio.NewReader(os.Stdin)
-	for {
-		fmt.Printf("%s ex) 2022-01-13 : ", s)
-		response, err := reader.ReadString('\n')
-		CheckError(err)
-		re := regexp.MustCompile(`(19|20)\d{2}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[0-1])`)
-		if re.MatchString(response) {
-			return true, response
-		} else {
-			return false, response
-		}
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatal(err)
 	}
-}
 
-func AskForConfirmation(s string) bool {
-	reader := bufio.NewReader(os.Stdin)
-	for {
-		fmt.Printf("%s [Y/N]: ", s)
-		response, err := reader.ReadString('\n')
-		CheckError(err)
-		response = strings.ToLower(strings.TrimSpace(response))
-		if response == "y" || response == "yes" {
-			return true
-		} else {
-			return false
-		}
+	fmt.Printf("resp.StatusCode: %v\n", resp.StatusCode)
+
+	if resp.StatusCode != 200 {
+		log.Fatal(fmt.Sprintf("Error: %s", string(body)))
 	}
-}
-
-func PostMessage(content string) {
-	data, _ := json.Marshal(map[string]string{
-		"text": content,
-	})
-
-	client := resty.New()
-	_, err := client.R().
-		SetHeader("Content-Type", "application/json").
-		SetBody(data).
-		Post(os.Getenv("WEBHOOK_URL"))
-	CheckError(err)
 }

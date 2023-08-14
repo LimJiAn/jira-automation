@@ -1,7 +1,6 @@
 # jira-automation
 
 Jira status change automation.
-Code that registers as a system service file and then executes it as a cron to change the status of the deployed issue
 ## Requirements
 
 * Go >= 1.14
@@ -12,7 +11,14 @@ Code that registers as a system service file and then executes it as a cron to c
 
 ```bash
 git clone https://github.com/LimJiAn/jira-automation
-go get
+
+go get github.com/andygrunwald/go-jira
+go get github.com/joho/godotenv
+go get github.com/go-resty/resty/v2
+
+or
+
+go get -u
 ```
 
 ##### Make env file
@@ -26,3 +32,18 @@ JIRA_URL = 'jira_url'
 WEBHOOK_URL = 'webhook_url'
 
 ```
+
+##### Commands
+
+```bash
+# due_date check subtask
+go run jira.go -com=due_date
+
+# status change preset
+go run jira.go -com=preset
+
+# status change release
+go run jira.go -com=release
+```
+
+
