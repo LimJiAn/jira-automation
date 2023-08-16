@@ -18,7 +18,7 @@ func (c *Client) CheckDeployIssues() {
 		transitions, _, _ := c.Issue.GetTransitions(v.Key)
 		for _, t := range transitions {
 			if t.Name == "Release" {
-				transitionID = v.ID
+				transitionID = t.ID
 				break
 			}
 		}
