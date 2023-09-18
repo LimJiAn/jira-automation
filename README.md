@@ -13,6 +13,7 @@ Code that registers as a system service file and then executes it as a cron to c
 
 ```bash
 $ git clone https://github.com/LimJiAn/jira-automation
+$ go get
 ```
 
 ## 👀 Usage
